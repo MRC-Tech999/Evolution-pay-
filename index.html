@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>ePay - Haïti</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Poppins', sans-serif;
       text-align: center;
       background-color: #f0f0f0;
       margin: 0;
@@ -43,32 +44,52 @@
       width: 360px;
       height: 220px;
       border-radius: 15px;
-      background: linear-gradient(135deg, #263238, #546e7a);
+      background: linear-gradient(145deg, #1e1e1e, #424242);
       color: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
       padding: 20px;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: linear-gradient(to right, #cfcfcf, #a0a0a0);
+      opacity: 0.3;
     }
     .card h2 {
       margin: 0;
-      font-size: 1.5em;
+      font-size: 1.4em;
+      letter-spacing: 1px;
     }
     .card-number {
-      font-size: 1.3em;
+      font-size: 1.2em;
       letter-spacing: 2px;
       margin: 10px 0;
+    }
+    .card-details {
+      font-size: 0.95em;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .card-details p {
+      margin: 5px 0;
+      width: 48%;
     }
     .card-type {
       font-weight: bold;
       font-size: 1em;
       text-align: right;
-    }
-    .card-details {
-      font-size: 0.95em;
+      margin-top: 10px;
     }
     footer {
       background-color: #111;
@@ -81,6 +102,13 @@
       padding: 15px;
       margin: 20px;
       border-radius: 10px;
+    }
+    a {
+      color: #0066cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -123,8 +151,8 @@
         <p><strong>Nom :</strong> <span id="cardName">---</span></p>
         <p><strong>CVV :</strong> <span id="cardCVV">---</span></p>
         <p><strong>Expiration :</strong> <span id="cardExpiry">--/--</span></p>
+        <p class="card-type" id="cardTypeLabel">Type</p>
       </div>
-      <div class="card-type" id="cardTypeLabel">Type</div>
     </div>
   </div>
 
@@ -133,7 +161,7 @@
   </footer>
 
   <script>
-    const cardFront = document.getElementById("cardBox");
+    const cardBox = document.getElementById("cardBox");
     const cardNumberEl = document.getElementById("cardNumber");
     const cardNameEl = document.getElementById("cardName");
     const cardCVVEl = document.getElementById("cardCVV");
@@ -176,8 +204,9 @@
 
     function changeDesign() {
       const color = colors[Math.floor(Math.random() * colors.length)];
-      cardFront.style.background = `linear-gradient(135deg, ${color}, #212121)`;
+      cardBox.style.background = `linear-gradient(145deg, ${color}, #1e1e1e)`;
     }
   </script>
 </body>
-</html>
+  </html>
+  
