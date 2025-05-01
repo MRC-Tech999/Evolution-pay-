@@ -53,24 +53,32 @@
       flex-direction: column;
       justify-content: space-between;
       background: linear-gradient(135deg, #263238, #546e7a);
+      transition: background 0.5s ease;
     }
-    .card h2 {
-      margin: 0;
-      font-size: 1.5em;
+    .chip {
+      width: 50px;
+      height: 35px;
+      background: linear-gradient(to right, #d4af37, #b8860b);
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+    .card-logo {
+      height: 30px;
+      align-self: flex-end;
     }
     .card-number {
       font-size: 1.3em;
       letter-spacing: 2px;
       margin: 10px 0;
     }
+    .card-details {
+      text-align: left;
+      font-size: 0.9em;
+    }
     .card-type {
       align-self: flex-end;
       font-weight: bold;
       font-size: 1em;
-    }
-    .card-details {
-      text-align: left;
-      font-size: 0.9em;
     }
     footer {
       background-color: #111;
@@ -83,6 +91,16 @@
       padding: 15px;
       margin: 20px;
       border-radius: 10px;
+    }
+    @media (max-width: 400px) {
+      .card {
+        width: 90%;
+        height: auto;
+        padding: 15px;
+      }
+      .card-number {
+        font-size: 1.1em;
+      }
     }
   </style>
 </head>
@@ -115,7 +133,8 @@
 
   <div class="card-container">
     <div class="card" id="cardFront">
-      <h2>ePay</h2>
+      <div class="chip"></div>
+      <img src="" alt="Logo Carte" class="card-logo" id="cardLogo">
       <div class="card-number" id="cardNumber">**** **** **** ****</div>
       <div class="card-details">
         <p><strong>Nom :</strong> <span id="cardName">---</span></p>
@@ -130,8 +149,15 @@
     © 2025 Marc-Tech & EvolutionPay — Tous droits réservés
   </footer>
 
+  <!-- SCRIPT -->
   <script>
     const cardFront = document.getElementById("cardFront");
+    const cardNumberEl = document.getElementById("cardNumber");
+    const cardNameEl = document.getElementById("cardName");
+    const cardCVVEl = document.getElementById("cardCVV");
+    const cardExpiryEl = document.getElementById("cardExpiry");
+    const cardTypeLabelEl = document.getElementById("cardTypeLabel");
+    const cardLogoEl = document.getElementById("cardLogo");
 
     const gradients = [
       "linear-gradient(135deg, #ff512f, #dd2476)",
@@ -143,53 +169,128 @@
       "linear-gradient(135deg, #ff416c, #ff4b2b)"
     ];
 
-    const cards = {
-      "Visa": [
-        { name: "Eda Anderson", number: "4929473869963560", cvv: "577", expiry: "12/25" },
-        { name: "Tremaine Wolf", number: "4024007174941616", cvv: "684", expiry: "11/27" },
-        { name: "Mr. Dale Turner Sr.", number: "4716147441509904", cvv: "273", expiry: "07/25" }
-      ],
-      "MasterCard": [
-        { name: "Dr. Elmo Connelly", number: "5304491115778402", cvv: "104", expiry: "11/26" },
-        { name: "Jayson Connelly", number: "5285654696549251", cvv: "519", expiry: "12/27" }
-      ],
-      "American Express": [
-        { name: "Clay Hills", number: "370425641978060", cvv: "716", expiry: "07/25" },
-        { name: "Mrs. Ora Simonis", number: "342277114495287", cvv: "294", expiry: "05/26" }
-      ],
-      "JCB": [
-        { name: "Ms. Lynn Streich", number: "3528968045376907", cvv: "509", expiry: "02/28" },
-        { name: "Clement Littel DDS", number: "3589328179209836", cvv: "650", expiry: "11/26" }
-      ]
+    const logoMap = {
+      'Visa': 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg',
+      'MasterCard': 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg',
+      'American Express': 'https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg',
+      'JCB': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/JCB_logo.svg'
     };
 
-    let generated = false;
+    const cards = {
+      <!-- Ton code HTML d'origine reste inchangé jusqu'au script -->
+<script>
+  const cardBox = document.getElementById("cardBox");
+  const cardFront = document.getElementById("cardFront");
+  const cardBack = document.getElementById("cardBack");
+  const colors = ["#263238", "#00695c", "#3f51b5", "#6a1b9a", "#37474f"];
+  let flipped = false;
+  let generated = false;
 
-    function generateCard() {
-      const selectedType = document.getElementById('cardType').value;
-      const cardList = cards[selectedType];
-      const card = cardList[Math.floor(Math.random() * cardList.length)];
-
-      document.getElementById('cardNumber').textContent = formatCardNumber(card.number);
-      document.getElementById('cardTypeLabel').textContent = selectedType;
-      document.getElementById('cardName').textContent = card.name;
-      document.getElementById('cardCVV').textContent = card.cvv;
-      document.getElementById('cardExpiry').textContent = card.expiry;
-
-      changeDesign();
-      generated = true;
-    }
-
+  const cards = {
+    "Visa": [
+      { name: "Weldon Kuhlman Sr.", number: "4716153453171906", cvv: "254", expiry: "03/26" },
+      { name: "Rosanna Miller", number: "4585210795086719", cvv: "252", expiry: "08/27" },
+      { name: "Dr. Jevon Hagenes", number: "4024007199736439", cvv: "299", expiry: "11/26" },
+      { name: "Mrs. Kitty Labadie Sr.", number: "4929781202811738", cvv: "998", expiry: "06/27" },
+      { name: "Bertha Connelly", number: "4485665819559887", cvv: "776", expiry: "05/26" },
+      { name: "Minerva Wuckert", number: "4485857377153779", cvv: "240", expiry: "04/26" },
+      { name: "Murl Gleichner", number: "4916109714151085", cvv: "800", expiry: "02/27" },
+      { name: "Hilario Heller", number: "4716590976081965", cvv: "519", expiry: "01/27" },
+      { name: "Shana Yost", number: "4532263449264533", cvv: "127", expiry: "12/26" },
+      { name: "Lurline Ritchie", number: "4024007163238701", cvv: "654", expiry: "09/25" },
+      { name: "Hermina Hermann", number: "4929453182368176", cvv: "352", expiry: "08/25" },
+      { name: "Brice Rutherford", number: "4539820026230758", cvv: "376", expiry: "10/27" },
+      { name: "Rickey Powlowski DVM", number: "4024007135272267", cvv: "801", expiry: "07/27" },
+      { name: "Elsie Bahringer", number: "4916947535574989", cvv: "396", expiry: "10/25" },
+      { name: "Hassan Lang", number: "4024007156506411", cvv: "437", expiry: "12/26" },
+      { name: "Claire Bergstrom II", number: "4716968472487169", cvv: "302", expiry: "05/25" }
+    ],
+    "MasterCard": [
+      { name: "Adonis Douglas", number: "5161084815414287", cvv: "227", expiry: "09/26" },
+      { name: "Dr. Arielle Medhurst II", number: "2720047677221158", cvv: "696", expiry: "06/26" },
+      { name: "Clarabelle Donnelly", number: "5340883927999927", cvv: "690", expiry: "07/27" },
+      { name: "Mrs. Katarina Turcotte IV", number: "2720322765086833", cvv: "858", expiry: "02/28" },
+      { name: "Noelia Zboncak", number: "2455518216571122", cvv: "151", expiry: "12/25" },
+      { name: "Prof. Magdalen Olson", number: "2337550734514395", cvv: "362", expiry: "01/27" },
+      { name: "Miss Luella McGlynn II", number: "2648885079170807", cvv: "126", expiry: "05/25" },
+      { name: "Miss Jewel Hartmann", number: "5568288787847171", cvv: "348", expiry: "03/28" },
+      { name: "Rupert Lockman", number: "5207932402842409", cvv: "351", expiry: "05/26" },
+      { name: "Mr. Alexandro Oberbrunner Jr.", number: "2436700919287453", cvv: "219", expiry: "10/25" },
+      { name: "Arne Stamm", number: "5142492943440724", cvv: "677", expiry: "10/27" },
+      { name: "Prof. Terrell Bruen II", number: "2596987540520388", cvv: "118", expiry: "12/27" },
+      { name: "Mr. Mathew Lockman III", number: "2552654799879343", cvv: "547", expiry: "11/26" },
+      { name: "Jerrell Grady", number: "5134793735350421", cvv: "327", expiry: "11/25" },
+      { name: "Dr. Lowell Gerlach Sr.", number: "5272783668968960", cvv: "390", expiry: "04/28" },
+      { name: "Arianna Murray", number: "2720222492232983", cvv: "659", expiry: "03/28" }
+    ],
+    "American Express": [
+      { name: "Deonte Barrows", number: "343528873102822", cvv: "873", expiry: "12/27" },
+      { name: "Ms. Magali Conroy II", number: "373332587213170", cvv: "850", expiry: "03/28" },
+      { name: "Queen Bartoletti", number: "374959955976753", cvv: "235", expiry: "01/27" },
+      { name: "Westley Mayer II", number: "349745778301200", cvv: "436", expiry: "04/27" },
+      { name: "Noah Herman", number: "378047389084133", cvv: "497", expiry: "07/26" },
+      { name: "Clement Spencer III", number: "345187171286577", cvv: "663", expiry: "10/27" },
+      { name: "Albin Boyle", number: "340651773175475", cvv: "822", expiry: "10/25" },
+      { name: "Mrs. Vanessa Schmitt V", number: "344207392384299", cvv: "778", expiry: "07/25" },
+      { name: "Xzavier Abbott", number: "340148856928599", cvv: "131", expiry: "03/26" },
+      { name: "Prof. Carol Dibbert", number: "346881951740451", cvv: "324", expiry: "07/27" },
+      { name: "Mrs. Jayda Strosin I", number: "347210341396841", cvv: "753", expiry: "12/27" },
+      { name: "Joanie Gorczany", number: "379577395829161", cvv: "957", expiry: "11/26" },
+      { name: "Santos West", number: "371249852428907", cvv: "905", expiry: "08/25" },
+      { name: "Dr. Austin Altenwerth IV", number: "373994403012738", cvv: "441", expiry: "05/25" },
+      { name: "Giovanni Kiehn Sr.", number: "379227194141729", cvv: "299", expiry: "03/26" },
+      { name: "Dr. Abdul Bashirian DDS", number: "344528573377855", cvv: "117", expiry: "09/26" }
+    ],
+    "JCB": [
+      { name: "Tessie Huel DVM", number: "3589929573079475", cvv: "135", expiry: "10/25" },
+      { name: "Luigi Leannon", number: "3528975898540810", cvv: "147", expiry: "02/28" },
+      { name: "Trace Will", number: "3589631742991479", cvv: "820", expiry: "08/27" },
+      { name: "Xzavier Goyette", number: "3589523707698829", cvv: "197", expiry: "12/25" },
+      { name: "Cielo Renner IV", number: "3589639247145087", cvv: "408", expiry: "11/27" },
+      { name: "Gonzalo Turcotte", number: "3528269823210073", cvv: "767", expiry: "07/26" },
+      { name: "Angie Pagac", number: "3589092029457595", cvv: "759", expiry: "01/26" },
+      { name: "Angelica Sipes", number: "3528307059347134", cvv: "302", expiry: "04/26" },
+      { name: "Timmy Spinka Jr.", number: "3528697123301681", cvv: "551", expiry: "06/25" },
+      { name: "Miss Nelda Stroman DVM", number: "3589202795687016", cvv: "888", expiry: "08/25" },
+      { name: "Prof. Gilberto Keebler", number: "3589820921942680", cvv: "183", expiry: "08/27" },
+      { name: "Ms. Nannie Feeney III", number: "3589028606185191", cvv: "702", expiry: "05/26" },
+      { name: "Davonte Pagac Jr.", number: "3528766281697691", cvv: "314", expiry: "02/28" },
+      { name: "Shanel Wintheiser", number: "3589493293268470", cvv: "288", expiry: "11/27" },
+      { name: "Ron Hamill", number: "3589963449400052", cvv: "539", expiry: "01/28" },
+      { name: "Shyann Nikolaus", number: "3528702343388854", cvv: "184", expiry: "01/27" }
+    ]
+  };
+</script
     function formatCardNumber(cardNumber) {
       return cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
     }
 
-    function changeDesign() {
-      if (generated) {
-        const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
-        cardFront.style.background = randomGradient;
+    function generateCard() {
+      const type = document.getElementById('cardType').value;
+      if (!cards[type] || cards[type].length === 0) {
+        alert("Plus de cartes disponibles pour ce type.");
+        return;
       }
+
+      const index = Math.floor(Math.random() * cards[type].length);
+      const card = cards[type][index];
+      cards[type].splice(index, 1); // Retirer la carte utilisée
+
+      cardNumberEl.textContent = formatCardNumber(card.number);
+      cardNameEl.textContent = card.name;
+      cardCVVEl.textContent = card.cvv;
+      cardExpiryEl.textContent = card.expiry;
+      cardTypeLabelEl.textContent = type;
+      cardLogoEl.src = logoMap[type];
+
+      changeDesign();
+    }
+
+    function changeDesign() {
+      const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
+      cardFront.style.background = randomGradient;
     }
   </script>
 </body>
-</html>
+  </html>
+  
