@@ -2,134 +2,161 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>EvolutionPay</title>
+  <title>ePay - Haïti</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      background-color: #e6e6e6;
+      background-color: #f0f0f0;
       margin: 0;
       padding: 0;
     }
     header {
-      background-color: #1e1e1e;
+      background-color: #111;
       color: white;
-      padding: 15px 0;
+      padding: 15px;
     }
     .insta-logo {
       width: 30px;
-      vertical-align: middle;
       margin-left: 10px;
     }
-    .card-generator {
-      margin: 30px 0;
-    }
-    .card-display {
-      margin-top: 30px;
-    }
-    .card {
-      width: 360px;
-      height: 220px;
-      margin: 20px auto;
-      padding: 20px;
-      color: white;
-      border-radius: 15px;
-      background: linear-gradient(135deg, #2c3e50, #4ca1af);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      text-align: left;
-      position: relative;
-      font-family: 'Courier New', monospace;
-    }
-    .card h2 {
-      margin: 0 0 10px;
-      font-size: 1.3em;
-      font-weight: bold;
-    }
-    .card p {
-      margin: 5px 0;
-      font-size: 0.95em;
-    }
-    .card-number {
-      font-size: 1.1em;
-      letter-spacing: 2px;
-      margin: 15px 0;
-    }
-    .footer {
-      background-color: #1e1e1e;
-      color: #ccc;
-      padding: 10px 0;
-      margin-top: 60px;
-    }
-    .description, .links {
-      background-color: #fff;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    .links a {
-      color: #2196F3;
-      text-decoration: none;
+    .card-generator, .buttons {
+      margin: 25px 0;
     }
     select, button {
-      padding: 8px 12px;
+      padding: 10px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
       font-size: 1em;
-      border-radius: 5px;
-      border: 1px solid #aaa;
     }
     button {
       background-color: #2196F3;
       color: white;
       cursor: pointer;
-      margin-left: 10px;
+    }
+    .card-container {
+      perspective: 1000px;
+      width: 360px;
+      margin: auto;
+    }
+    .card {
+      width: 360px;
+      height: 220px;
+      border-radius: 15px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s;
+    }
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+    .front, .back {
+      background: linear-gradient(135deg, #263238, #546e7a);
+      color: white;
+      border-radius: 15px;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .front {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .front h2 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+    .card-number {
+      font-size: 1.3em;
+      letter-spacing: 2px;
+      margin: 10px 0;
+    }
+    .card-type {
+      align-self: flex-end;
+      font-weight: bold;
+      font-size: 1em;
+    }
+    .back {
+      transform: rotateY(180deg);
+      text-align: left;
+    }
+    footer {
+      background-color: #111;
+      color: #ccc;
+      padding: 10px;
+      margin-top: 50px;
+    }
+    .description {
+      background-color: white;
+      padding: 15px;
+      margin: 20px;
+      border-radius: 10px;
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>EvolutionPay</h1>
+    <h1>ePay — Haïti</h1>
     <a href="https://www.instagram.com/j.m.h.2024" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="insta-logo" />
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" class="insta-logo" />
     </a>
   </header>
 
-  <main>
-    <section class="description">
-      <h2>Générateur de cartes de test</h2>
-      <p>EvolutionPay permet de générer gratuitement une carte fictive pour tester des services qui demandent un numéro de carte (essais gratuits, etc). Chaque utilisateur peut générer une seule carte ePay par session.</p>
-    </section>
+  <div class="description">
+    <p>Bienvenue sur ePay — Générateur de cartes test pour services d’essai. Valide pour test en ligne (sans transaction réelle). 1 carte par utilisateur.</p>
+  </div>
 
-    <div class="card-generator">
-      <label for="cardType">Type de carte :</label>
-      <select id="cardType">
-        <option value="Visa">Visa</option>
-        <option value="MasterCard">MasterCard</option>
-        <option value="American Express">American Express</option>
-        <option value="JCB">JCB</option>
-      </select>
-      <button onclick="generateCard()">Générer la carte</button>
+  <div class="card-generator">
+    <label>Choisissez un type :</label>
+    <select id="cardType">
+      <option value="Visa">Visa</option>
+      <option value="MasterCard">MasterCard</option>
+      <option value="American Express">American Express</option>
+      <option value="JCB">JCB</option>
+    </select>
+    <button onclick="generateCard()">Générer la carte</button>
+  </div>
+
+  <div class="buttons">
+    <button onclick="flipCard()">Voir infos carte</button>
+    <button onclick="changeDesign()">Changer design carte</button>
+  </div>
+
+  <div class="card-container">
+    <div class="card" id="cardBox">
+      <div class="front" id="cardFront">
+        <h2>ePay</h2>
+        <div class="card-number" id="cardNumber">**** **** **** ****</div>
+        <div class="card-type" id="cardTypeLabel">Type</div>
+      </div>
+      <div class="back" id="cardBack">
+        <p><strong>Nom :</strong> <span id="cardName">---</span></p>
+        <p><strong>CVV :</strong> <span id="cardCVV">---</span></p>
+        <p><strong>Expiration :</strong> <span id="cardExpiry">--/--</span></p>
+      </div>
     </div>
+  </div>
 
-    <div id="cardDisplay" class="card-display"></div>
-
-    <section class="links">
-      <h3>Autres projets :</h3>
-      <ul>
-        <li>
-          <a href="https://temporary-email-o48q.vercel.app/" target="_blank">Temporary Email — Générateur d'emails jetables</a><br />
-          <small>Ce site vous permet de générer une adresse email temporaire pour recevoir des mails anonymement ou tester un service rapidement.</small>
-        </li>
-      </ul>
-    </section>
-  </main>
-
-  <footer class="footer">
-    © 2025 Marc-Tech et EvolutionPay — Tous droits réservés
+  <footer>
+    © 2025 Marc-Tech & EvolutionPay — Tous droits réservés
   </footer>
 
   <script>
+    const cardBox = document.getElementById("cardBox");
+    const cardFront = document.getElementById("cardFront");
+    const cardBack = document.getElementById("cardBack");
+    const colors = ["#263238", "#00695c", "#3f51b5", "#6a1b9a", "#37474f"];
+    let flipped = false;
     let generated = false;
-    const allCards = {
+
+    const cards = {
       "Visa": [
         { name: "Aniyah Goodwin", number: "4539 3766 3556 8484", cvv: "772", expiry: "02/28" },
         { name: "Dock Barton", number: "4556 6538 6228 0662", cvv: "962", expiry: "07/27" }
@@ -139,36 +166,39 @@
         { name: "Sofia Pacocha", number: "2442 9773 0946 2324", cvv: "222", expiry: "08/27" }
       ],
       "American Express": [
-        { name: "Effie Rodriguez", number: "3710 5201 3200 0466", cvv: "216", expiry: "09/25" },
-        { name: "Dr. Joyce Nienow I", number: "3481 1176 1704 770", cvv: "503", expiry: "11/25" }
+        { name: "Effie Rodriguez", number: "3710 5201 3200 0466", cvv: "216", expiry: "09/25" }
       ],
       "JCB": [
-        { name: "Abby Pagac", number: "3528 4612 6347 1402", cvv: "869", expiry: "09/25" },
-        { name: "Tomasa Gibson V", number: "3528 8051 8696 3954", cvv: "463", expiry: "12/27" }
+        { name: "Abby Pagac", number: "3528 4612 6347 1402", cvv: "869", expiry: "09/25" }
       ]
     };
 
     function generateCard() {
       if (generated) {
-        alert("Une seule carte par utilisateur !");
+        alert("Une carte a déjà été générée !");
         return;
       }
       const type = document.getElementById("cardType").value;
-      const cards = allCards[type];
-      const card = cards[Math.floor(Math.random() * cards.length)];
-      const display = document.getElementById("cardDisplay");
-      display.innerHTML = `
-        <div class="card">
-          <h2>ePay — ${type}</h2>
-          <div class="card-number">${card.number}</div>
-          <p><strong>Nom :</strong> ${card.name}</p>
-          <p><strong>CVV :</strong> ${card.cvv}</p>
-          <p><strong>Expiration :</strong> ${card.expiry}</p>
-        </div>
-      `;
+      const data = cards[type][Math.floor(Math.random() * cards[type].length)];
+      document.getElementById("cardNumber").textContent = data.number;
+      document.getElementById("cardName").textContent = data.name;
+      document.getElementById("cardCVV").textContent = data.cvv;
+      document.getElementById("cardExpiry").textContent = data.expiry;
+      document.getElementById("cardTypeLabel").textContent = type;
       generated = true;
+    }
+
+    function flipCard() {
+      flipped = !flipped;
+      cardBox.classList.toggle("flipped", flipped);
+    }
+
+    function changeDesign() {
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      cardFront.style.background = `linear-gradient(135deg, ${color}, #212121)`;
+      cardBack.style.background = `linear-gradient(135deg, ${color}, #212121)`;
     }
   </script>
 </body>
-            </html>
-            
+    </html>
+  
