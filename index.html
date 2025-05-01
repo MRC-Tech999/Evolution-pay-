@@ -87,6 +87,13 @@
       transform: rotateY(180deg);
       text-align: left;
     }
+    .chip {
+      width: 50px;
+      height: 35px;
+      background: gold;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
     footer {
       background-color: #111;
       color: #ccc;
@@ -110,7 +117,14 @@
   </header>
 
   <div class="description">
-    <p>Bienvenue sur ePay — Générateur de cartes test pour services d’essai. Valide pour test en ligne (sans transaction réelle). 1 carte par utilisateur.</p>
+    <p>
+      Bienvenue sur ePay — Générateur de cartes test pour services d’essai. Valide pour test en ligne (sans transaction réelle). 1 carte par utilisateur.
+    </p>
+    <p>
+      Besoin d’un email temporaire ? Utilisez notre outil : 
+      <a href="https://temporary-email-o48q.vercel.app/" target="_blank">temporary-email-o48q.vercel.app</a><br>
+      Ce service vous permet de générer un email temporaire et de recevoir les messages sans utiliser votre vrai mail.
+    </p>
   </div>
 
   <div class="card-generator">
@@ -137,6 +151,7 @@
         <div class="card-type" id="cardTypeLabel">Type</div>
       </div>
       <div class="back" id="cardBack">
+        <div class="chip"></div>
         <p><strong>Nom :</strong> <span id="cardName">---</span></p>
         <p><strong>CVV :</strong> <span id="cardCVV">---</span></p>
         <p><strong>Expiration :</strong> <span id="cardExpiry">--/--</span></p>
@@ -200,5 +215,5 @@
     }
   </script>
 </body>
-  </html>
-  
+                                    </html>
+                                      
