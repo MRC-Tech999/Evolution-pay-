@@ -107,7 +107,7 @@
   </header>
 
   <div class="description">
-    <p>Bienvenue sur ePay — Générateur de cartes premier sites de ePay Valide pour transaction réelle. 1 carte par utilisateur.</p>
+    <p>Bienvenue sur ePay — Générateur de cartes test pour services d’essai. Valide pour test en ligne (sans transaction réelle). 1 carte par utilisateur.</p>
   </div>
 
   <div class="card-generator">
@@ -153,14 +153,6 @@
     let flipped = false;
     let generated = false;
 
-    // Store generated card numbers to avoid repetition
-    const usedCards = {
-      "Visa": [],
-      "MasterCard": [],
-      "American Express": [],
-      "JCB": []
-    };
-
     const cards = {
       "Visa": [
         { name: "Eda Anderson", number: "4929473869963560", cvv: "577", expiry: "12/25" },
@@ -172,53 +164,50 @@
         { name: "Chandler Wunsch", number: "4716694195596215", cvv: "430", expiry: "04/26" },
         { name: "Jaylen Miller II", number: "4916343977809853", cvv: "338", expiry: "03/26" },
         { name: "Claudine Spencer", number: "4532736558704985", cvv: "622", expiry: "02/28" },
-        { name: "Merl Rempel", number: "4532011989546284", cvv: "424", expiry: "05/25" }
+        { name: "Merl Rempel", number: "4532011989546284", cvv: "424", expiry: "05/25" },
+        { name: "Wilburn Koss", number: "4916104055603562", cvv: "801", expiry: "12/25" },
+        { name: "Maybell Hickle", number: "4716092530706211", cvv: "597", expiry: "07/26" },
+        { name: "Delta Corwin", number: "4024007121724339", cvv: "313", expiry: "01/27" },
+        { name: "Mrs. Karolann Kulas", number: "4532172124412442", cvv: "207", expiry: "10/25" },
+        { name: "Joanny Armstrong", number: "4916752857231840", cvv: "998", expiry: "01/27" },
+        { name: "Bradford Kessler", number: "4556584892747190", cvv: "388", expiry: "07/26" }
       ],
       "MasterCard": [
         { name: "Dr. Elmo Connelly", number: "5304491115778402", cvv: "104", expiry: "11/26" },
         { name: "Jayson Connelly", number: "5285654696549251", cvv: "519", expiry: "12/27" },
         { name: "Lionel Berge", number: "5314193420013479", cvv: "928", expiry: "03/26" },
-        { name: "Mr. Elliot Schmitt MD", number: "2379991657251111", cvv: "464", expiry: "05/25" }
+        { name: "Mr. Elliot Schmitt MD", number: "2379991657251111", cvv: "464", expiry: "05/25" },
+        { name: "Christian Lakin", number: "5493869716361051", cvv: "527", expiry: "06/25" }
+        // Ajoutez plus de cartes MasterCard ici si nécessaire...
       ],
       "American Express": [
         { name: "Clay Hills", number: "370425641978060", cvv: "716", expiry: "07/25" },
         { name: "Mrs. Ora Simonis", number: "342277114495287", cvv: "294", expiry: "05/26" },
-        { name: "Prof. Eloise Howe DVM", number: "376513168180295", cvv: "718", expiry: "11/25" }
+        { name: "Prof. Eloise Howe DVM", number: "376513168180295", cvv: "718", expiry: "11/25" },
+        { name: "Filiberto Ferry V", number: "379384732748778", cvv: "966", expiry: "05/26" },
+        { name: "Freeda Roberts", number: "341978722092736", cvv: "464", expiry: "12/26" }
+        // Ajoutez plus de cartes American Express ici si nécessaire...
       ],
       "JCB": [
         { name: "Ms. Lynn Streich", number: "3528968045376907", cvv: "509", expiry: "02/28" },
         { name: "Clement Littel DDS", number: "3589328179209836", cvv: "650", expiry: "11/26" },
-        { name: "Joyce Rice", number: "3528852466367159", cvv: "885", expiry: "02/28" }
+        { name: "Joyce Rice", number: "3528852466367159", cvv: "885", expiry: "02/28" },
+        { name: "Ms. Chelsie Upton II", number: "3589828384671803", cvv: "700", expiry: "01/26" },
+        { name: "Marlin Bogisich", number: "3589932852898805", cvv: "681", expiry: "06/27" }
+        // Ajoutez plus de cartes JCB ici si nécessaire...
       ]
     };
 
     function generateCard() {
       const selectedType = document.getElementById('cardType').value;
       const cardList = cards[selectedType];
-      
-      // Find a card that hasn't been used yet
-      let unusedCard = null;
-      for (let i = 0; i < cardList.length; i++) {
-        if (!usedCards[selectedType].includes(cardList[i].number)) {
-          unusedCard = cardList[i];
-          break;
-        }
-      }
+      const card = cardList[Math.floor(Math.random() * cardList.length)];
 
-      // If all cards have been used, notify the user
-      if (!unusedCard) {
-        alert("Toutes les cartes de ce type ont été générées. Veuillez réessayer plus tard.");
-        return;
-      }
-
-      // Mark the card as used
-      usedCards[selectedType].push(unusedCard.number);
-
-      document.getElementById('cardNumber').textContent = formatCardNumber(unusedCard.number);
+      document.getElementById('cardNumber').textContent = formatCardNumber(card.number);
       document.getElementById('cardTypeLabel').textContent = selectedType;
-      document.getElementById('cardName').textContent = unusedCard.name;
-      document.getElementById('cardCVV').textContent = unusedCard.cvv;
-      document.getElementById('cardExpiry').textContent = unusedCard.expiry;
+      document.getElementById('cardName').textContent = card.name;
+      document.getElementById('cardCVV').textContent = card.cvv;
+      document.getElementById('cardExpiry').textContent = card.expiry;
 
       cardBox.style.transform = 'rotateY(0deg)';
       generated = true;
@@ -243,5 +232,4 @@
     }
   </script>
 </body>
-  </html>
-  
+</html>
