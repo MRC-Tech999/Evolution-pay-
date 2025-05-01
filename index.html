@@ -2,11 +2,10 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>ePay</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>ePay - Haïti</title>
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
       background-color: #f0f0f0;
       margin: 0;
@@ -37,6 +36,7 @@
       cursor: pointer;
     }
     .card-container {
+      perspective: 1000px;
       width: 360px;
       margin: auto;
     }
@@ -44,52 +44,45 @@
       width: 360px;
       height: 220px;
       border-radius: 15px;
-      background: linear-gradient(145deg, #1e1e1e, #424242);
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.8s;
+    }
+    .front, .back {
+      background: linear-gradient(135deg, #263238, #546e7a);
       color: white;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
       padding: 20px;
       box-sizing: border-box;
+    }
+    .front {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      position: relative;
-      overflow: hidden;
+      align-items: flex-start;
     }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 40px;
-      background: linear-gradient(to right, #cfcfcf, #a0a0a0);
-      opacity: 0.3;
-    }
-    .card h2 {
+    .front h2 {
       margin: 0;
-      font-size: 1.4em;
-      letter-spacing: 1px;
+      font-size: 1.5em;
     }
     .card-number {
-      font-size: 1.2em;
+      font-size: 1.3em;
       letter-spacing: 2px;
       margin: 10px 0;
     }
-    .card-details {
-      font-size: 0.95em;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-    .card-details p {
-      margin: 5px 0;
-      width: 48%;
-    }
     .card-type {
+      align-self: flex-end;
       font-weight: bold;
       font-size: 1em;
-      text-align: right;
-      margin-top: 10px;
+    }
+    .back {
+      transform: rotateY(180deg);
+      text-align: left;
     }
     footer {
       background-color: #111;
@@ -103,13 +96,6 @@
       margin: 20px;
       border-radius: 10px;
     }
-    a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
   </style>
 </head>
 <body>
@@ -121,14 +107,7 @@
   </header>
 
   <div class="description">
-    <p>
-      Bienvenue sur ePay premier sites cartes virtual. Valide pour transaction réelle. 1 carte par utilisateur.
-    </p>
-    <p>
-      Besoin d’un email temporaire ? Utilisez notre outil :
-      <a href="https://temporary-email-o48q.vercel.app/" target="_blank">https://temporary-email-black.vercel.app/</a><br>
-      Ce service vous permet de générer un email temporaire et de recevoir les messages sans utiliser votre vrai mail.
-    </p>
+    <p>Bienvenue sur ePay — Générateur de cartes premier sites de ePay Valide pour transaction réelle. 1 carte par utilisateur.</p>
   </div>
 
   <div class="card-generator">
@@ -140,18 +119,24 @@
       <option value="JCB">JCB</option>
     </select>
     <button onclick="generateCard()">Générer la carte</button>
+  </div>
+
+  <div class="buttons">
+    <button onclick="flipCard()">Voir infos carte</button>
     <button onclick="changeDesign()">Changer design carte</button>
   </div>
 
   <div class="card-container">
     <div class="card" id="cardBox">
-      <h2>ePay</h2>
-      <div class="card-number" id="cardNumber">**** **** **** ****</div>
-      <div class="card-details">
+      <div class="front" id="cardFront">
+        <h2>ePay</h2>
+        <div class="card-number" id="cardNumber">**** **** **** ****</div>
+        <div class="card-type" id="cardTypeLabel">Type</div>
+      </div>
+      <div class="back" id="cardBack">
         <p><strong>Nom :</strong> <span id="cardName">---</span></p>
         <p><strong>CVV :</strong> <span id="cardCVV">---</span></p>
         <p><strong>Expiration :</strong> <span id="cardExpiry">--/--</span></p>
-        <p class="card-type" id="cardTypeLabel">Type</p>
       </div>
     </div>
   </div>
@@ -162,162 +147,99 @@
 
   <script>
     const cardBox = document.getElementById("cardBox");
-    const cardNumberEl = document.getElementById("cardNumber");
-    const cardNameEl = document.getElementById("cardName");
-    const cardCVVEl = document.getElementById("cardCVV");
-    const cardExpiryEl = document.getElementById("cardExpiry");
-    const cardTypeLabelEl = document.getElementById("cardTypeLabel");
+    const cardFront = document.getElementById("cardFront");
+    const cardBack = document.getElementById("cardBack");
     const colors = ["#263238", "#00695c", "#3f51b5", "#6a1b9a", "#37474f"];
+    let flipped = false;
     let generated = false;
+
+    // Store generated card numbers to avoid repetition
+    const usedCards = {
+      "Visa": [],
+      "MasterCard": [],
+      "American Express": [],
+      "JCB": []
+    };
 
     const cards = {
       "Visa": [
-  {
-    "type": "Visa",
-    "name": "Eda Anderson",
-    "number": "4929473869963560",
-    "cvv": "577",
-    "expiry": "12/25"
-  },
-  {
-    "type": "Visa",
-    "name": "Tremaine Wolf",
-    "number": "4024007174941616",
-    "cvv": "684",
-    "expiry": "11/27"
-  },
-  {
-    "type": "Visa",
-    "name": "Mr. Dale Turner Sr.",
-    "number": "4716147441509904",
-    "cvv": "273",
-    "expiry": "07/25"
-  },
-  {
-    "type": "Visa",
-    "name": "Dr. Francis Crona PhD",
-    "number": "4716040009464077",
-    "cvv": "221",
-    "expiry": "03/27"
-  },
-  {
-    "type": "Visa",
-    "name": "Theresa Schmitt V",
-    "number": "4532323070578583",
-    "cvv": "346",
-    "expiry": "04/27"
-  },
-  {
-    "type": "Visa",
-    "name": "Tony Kerluke DDS",
-    "number": "4723075860605260",
-    "cvv": "492",
-    "expiry": "08/27"
-  },
-  {
-    "type": "Visa",
-    "name": "Chandler Wunsch",
-    "number": "4716694195596215",
-    "cvv": "430",
-    "expiry": "04/26"
-  },
-  {
-    "type": "Visa",
-    "name": "Jaylen Miller II",
-    "number": "4916343977809853",
-    "cvv": "338",
-    "expiry": "03/26"
-  },
-  {
-    "type": "Visa",
-    "name": "Claudine Spencer",
-    "number": "4532736558704985",
-    "cvv": "622",
-    "expiry": "02/28"
-  },
-  {
-    "type": "Visa",
-    "name": "Merl Rempel",
-    "number": "4532011989546284",
-    "cvv": "424",
-    "expiry": "05/25"
-  },
-  {
-    "type": "Visa",
-    "name": "Wilburn Koss",
-    "number": "4916104055603562",
-    "cvv": "801",
-    "expiry": "12/25"
-  },
-  {
-    "type": "Visa",
-    "name": "Maybell Hickle",
-    "number": "4716092530706211",
-    "cvv": "597",
-    "expiry": "07/26"
-  },
-  {
-    "type": "Visa",
-    "name": "Delta Corwin",
-    "number": "4024007121724339",
-    "cvv": "313",
-    "expiry": "01/27"
-  },
-  {
-    "type": "Visa",
-    "name": "Mrs. Karolann Kulas",
-    "number": "4532172124412442",
-    "cvv": "207",
-    "expiry": "10/25"
-  },
-  {
-    "type": "Visa",
-    "name": "Joanny Armstrong",
-    "number": "4916752857231840",
-    "cvv": "998",
-    "expiry": "01/27"
-  },
-  {
-    "type": "Visa",
-    "name": "Bradford Kessler",
-    "number": "4556584892747190",
-    "cvv": "388",
-    "expiry": "07/26"
-  }
-]
-        
-        
-    
+        { name: "Eda Anderson", number: "4929473869963560", cvv: "577", expiry: "12/25" },
+        { name: "Tremaine Wolf", number: "4024007174941616", cvv: "684", expiry: "11/27" },
+        { name: "Mr. Dale Turner Sr.", number: "4716147441509904", cvv: "273", expiry: "07/25" },
+        { name: "Dr. Francis Crona PhD", number: "4716040009464077", cvv: "221", expiry: "03/27" },
+        { name: "Theresa Schmitt V", number: "4532323070578583", cvv: "346", expiry: "04/27" },
+        { name: "Tony Kerluke DDS", number: "4723075860605260", cvv: "492", expiry: "08/27" },
+        { name: "Chandler Wunsch", number: "4716694195596215", cvv: "430", expiry: "04/26" },
+        { name: "Jaylen Miller II", number: "4916343977809853", cvv: "338", expiry: "03/26" },
+        { name: "Claudine Spencer", number: "4532736558704985", cvv: "622", expiry: "02/28" },
+        { name: "Merl Rempel", number: "4532011989546284", cvv: "424", expiry: "05/25" }
+      ],
       "MasterCard": [
-        { name: "Gavin Kreiger", number: "5290 1201 5102 9224", cvv: "663", expiry: "09/25" },
-        { name: "Sofia Pacocha", number: "2442 9773 0946 2324", cvv: "222", expiry: "08/27" }
+        { name: "Dr. Elmo Connelly", number: "5304491115778402", cvv: "104", expiry: "11/26" },
+        { name: "Jayson Connelly", number: "5285654696549251", cvv: "519", expiry: "12/27" },
+        { name: "Lionel Berge", number: "5314193420013479", cvv: "928", expiry: "03/26" },
+        { name: "Mr. Elliot Schmitt MD", number: "2379991657251111", cvv: "464", expiry: "05/25" }
       ],
       "American Express": [
-        { name: "Effie Rodriguez", number: "3710 5201 3200 0466", cvv: "216", expiry: "09/25" }
+        { name: "Clay Hills", number: "370425641978060", cvv: "716", expiry: "07/25" },
+        { name: "Mrs. Ora Simonis", number: "342277114495287", cvv: "294", expiry: "05/26" },
+        { name: "Prof. Eloise Howe DVM", number: "376513168180295", cvv: "718", expiry: "11/25" }
       ],
       "JCB": [
-        { name: "Abby Pagac", number: "3528 4612 6347 1402", cvv: "869", expiry: "09/25" }
+        { name: "Ms. Lynn Streich", number: "3528968045376907", cvv: "509", expiry: "02/28" },
+        { name: "Clement Littel DDS", number: "3589328179209836", cvv: "650", expiry: "11/26" },
+        { name: "Joyce Rice", number: "3528852466367159", cvv: "885", expiry: "02/28" }
       ]
     };
 
     function generateCard() {
-      if (generated) {
-        alert("Une carte a déjà été générée !");
+      const selectedType = document.getElementById('cardType').value;
+      const cardList = cards[selectedType];
+      
+      // Find a card that hasn't been used yet
+      let unusedCard = null;
+      for (let i = 0; i < cardList.length; i++) {
+        if (!usedCards[selectedType].includes(cardList[i].number)) {
+          unusedCard = cardList[i];
+          break;
+        }
+      }
+
+      // If all cards have been used, notify the user
+      if (!unusedCard) {
+        alert("Toutes les cartes de ce type ont été générées. Veuillez réessayer plus tard.");
         return;
       }
-      const type = document.getElementById("cardType").value;
-      const data = cards[type][Math.floor(Math.random() * cards[type].length)];
-      cardNumberEl.textContent = data.number;
-      cardNameEl.textContent = data.name;
-      cardCVVEl.textContent = data.cvv;
-      cardExpiryEl.textContent = data.expiry;
-      cardTypeLabelEl.textContent = type;
+
+      // Mark the card as used
+      usedCards[selectedType].push(unusedCard.number);
+
+      document.getElementById('cardNumber').textContent = formatCardNumber(unusedCard.number);
+      document.getElementById('cardTypeLabel').textContent = selectedType;
+      document.getElementById('cardName').textContent = unusedCard.name;
+      document.getElementById('cardCVV').textContent = unusedCard.cvv;
+      document.getElementById('cardExpiry').textContent = unusedCard.expiry;
+
+      cardBox.style.transform = 'rotateY(0deg)';
       generated = true;
     }
 
+    function formatCardNumber(cardNumber) {
+      return cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
+    }
+
+    function flipCard() {
+      if (generated) {
+        flipped = !flipped;
+        cardBox.style.transform = flipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+      }
+    }
+
     function changeDesign() {
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      cardBox.style.background = `linear-gradient(145deg, ${color}, #1e1e1e)`;
+      if (generated) {
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        cardFront.style.background = randomColor;
+      }
     }
   </script>
 </body>
