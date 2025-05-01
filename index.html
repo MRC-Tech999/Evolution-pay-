@@ -5,16 +5,16 @@
   <title>EvolutionPay</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       text-align: center;
-      background-color: #f2f2f2;
+      background-color: #e6e6e6;
       margin: 0;
       padding: 0;
     }
     header {
-      background-color: #333;
+      background-color: #1e1e1e;
       color: white;
-      padding: 10px 0;
+      padding: 15px 0;
     }
     .insta-logo {
       width: 30px;
@@ -22,44 +22,66 @@
       margin-left: 10px;
     }
     .card-generator {
-      margin: 20px;
+      margin: 30px 0;
     }
     .card-display {
-      margin-top: 20px;
+      margin-top: 30px;
     }
     .card {
-      width: 300px;
-      margin: 0 auto;
+      width: 360px;
+      height: 220px;
+      margin: 20px auto;
       padding: 20px;
       color: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #aaa;
+      border-radius: 15px;
+      background: linear-gradient(135deg, #2c3e50, #4ca1af);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      text-align: left;
+      position: relative;
+      font-family: 'Courier New', monospace;
     }
-    footer {
-      background-color: #222;
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+    .card p {
+      margin: 5px 0;
+      font-size: 0.95em;
+    }
+    .card-number {
+      font-size: 1.1em;
+      letter-spacing: 2px;
+      margin: 15px 0;
+    }
+    .footer {
+      background-color: #1e1e1e;
       color: #ccc;
       padding: 10px 0;
-      margin-top: 50px;
+      margin-top: 60px;
     }
-    .description {
-      padding: 20px;
+    .description, .links {
       background-color: #fff;
       margin: 20px;
-      border-radius: 8px;
-    }
-    .links {
-      margin-top: 40px;
-    }
-    .links ul {
-      list-style: none;
-      padding: 0;
-    }
-    .links li {
-      margin: 5px 0;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     .links a {
       color: #2196F3;
       text-decoration: none;
+    }
+    select, button {
+      padding: 8px 12px;
+      font-size: 1em;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+    button {
+      background-color: #2196F3;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
     }
   </style>
 </head>
@@ -73,13 +95,12 @@
 
   <main>
     <section class="description">
-      <h2>Bienvenue sur EvolutionPay</h2>
-      <p>Ce site vous permet de générer gratuitement une carte fictive (Visa, MasterCard, AmEx, JCB) pour tester des services en ligne qui demandent une carte.</p>
-      <p>Chaque utilisateur peut générer une seule carte virtuelle affichant le nom <strong>ePay</strong>, avec un design coloré et le type de carte choisi.</p>
+      <h2>Générateur de cartes de test</h2>
+      <p>EvolutionPay permet de générer gratuitement une carte fictive pour tester des services qui demandent un numéro de carte (essais gratuits, etc). Chaque utilisateur peut générer une seule carte ePay par session.</p>
     </section>
 
     <div class="card-generator">
-      <label for="cardType">Choisissez le type de carte :</label>
+      <label for="cardType">Type de carte :</label>
       <select id="cardType">
         <option value="Visa">Visa</option>
         <option value="MasterCard">MasterCard</option>
@@ -92,15 +113,17 @@
     <div id="cardDisplay" class="card-display"></div>
 
     <section class="links">
-      <h3>Mes autres projets :</h3>
+      <h3>Autres projets :</h3>
       <ul>
-        <li><a href="https://temporary-email-o48q.vercel.app/" target="_blank">Temporary Email — Créez des adresses email jetables</a></li>
+        <li>
+          <a href="https://temporary-email-o48q.vercel.app/" target="_blank">Temporary Email — Générateur d'emails jetables</a><br />
+          <small>Ce site vous permet de générer une adresse email temporaire pour recevoir des mails anonymement ou tester un service rapidement.</small>
+        </li>
       </ul>
-      <p><strong>Description :</strong> Ce site vous permet de générer une adresse email temporaire pour s'inscrire rapidement à des services ou recevoir un mail sans révéler votre vraie adresse.</p>
     </section>
   </main>
 
-  <footer>
+  <footer class="footer">
     © 2025 Marc-Tech et EvolutionPay — Tous droits réservés
   </footer>
 
@@ -108,31 +131,22 @@
     let generated = false;
     const allCards = {
       "Visa": [
-        { "name": "Aniyah Goodwin", "number": "4539 3766 3556 8484", "cvv": "772", "expiry": "02/28" },
-        { "name": "Dock Barton", "number": "4556 6538 6228 0662", "cvv": "962", "expiry": "07/27" }
-        // Ajoute ici toutes les autres Visa...
+        { name: "Aniyah Goodwin", number: "4539 3766 3556 8484", cvv: "772", expiry: "02/28" },
+        { name: "Dock Barton", number: "4556 6538 6228 0662", cvv: "962", expiry: "07/27" }
       ],
       "MasterCard": [
-        { "name": "Gavin Kreiger", "number": "5290 1201 5102 9224", "cvv": "663", "expiry": "09/25" },
-        { "name": "Sofia Pacocha", "number": "2442 9773 0946 2324", "cvv": "222", "expiry": "08/27" }
-        // Autres MasterCard...
+        { name: "Gavin Kreiger", number: "5290 1201 5102 9224", cvv: "663", expiry: "09/25" },
+        { name: "Sofia Pacocha", number: "2442 9773 0946 2324", cvv: "222", expiry: "08/27" }
       ],
       "American Express": [
-        { "name": "Effie Rodriguez", "number": "3710 5201 3200 0466", "cvv": "216", "expiry": "09/25" },
-        { "name": "Dr. Joyce Nienow I", "number": "3481 1176 1704 770", "cvv": "503", "expiry": "11/25" }
-        // ...
+        { name: "Effie Rodriguez", number: "3710 5201 3200 0466", cvv: "216", expiry: "09/25" },
+        { name: "Dr. Joyce Nienow I", number: "3481 1176 1704 770", cvv: "503", expiry: "11/25" }
       ],
       "JCB": [
-        { "name": "Abby Pagac", "number": "3528 4612 6347 1402", "cvv": "869", "expiry": "09/25" },
-        { "name": "Tomasa Gibson V", "number": "3528 8051 8696 3954", "cvv": "463", "expiry": "12/27" }
-        // ...
+        { name: "Abby Pagac", number: "3528 4612 6347 1402", cvv: "869", expiry: "09/25" },
+        { name: "Tomasa Gibson V", number: "3528 8051 8696 3954", cvv: "463", expiry: "12/27" }
       ]
     };
-
-    function getRandomColor() {
-      const colors = ["#4CAF50", "#2196F3", "#FF5722", "#9C27B0", "#3F51B5"];
-      return colors[Math.floor(Math.random() * colors.length)];
-    }
 
     function generateCard() {
       if (generated) {
@@ -144,10 +158,10 @@
       const card = cards[Math.floor(Math.random() * cards.length)];
       const display = document.getElementById("cardDisplay");
       display.innerHTML = `
-        <div class="card" style="background-color:${getRandomColor()}">
-          <h2>ePay (${type})</h2>
+        <div class="card">
+          <h2>ePay — ${type}</h2>
+          <div class="card-number">${card.number}</div>
           <p><strong>Nom :</strong> ${card.name}</p>
-          <p><strong>Numéro :</strong> ${card.number}</p>
           <p><strong>CVV :</strong> ${card.cvv}</p>
           <p><strong>Expiration :</strong> ${card.expiry}</p>
         </div>
@@ -156,5 +170,5 @@
     }
   </script>
 </body>
-                                                             </html>
-    
+            </html>
+            
