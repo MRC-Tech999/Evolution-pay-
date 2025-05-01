@@ -11,6 +11,34 @@
         <a href="https://www.instagram.com/j.m.h.2024" target="_blank">
             <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" class="insta-logo">
         </a>
+        <main>
+    <section class="description">
+        <h2>Bienvenue sur EvolutionPay</h2>
+        <p>Ce site vous permet de générer une carte virtuelle fictive (Visa, MasterCard, AmEx, JCB) pour tester des services qui demandent une carte sans facturation réelle.</p>
+        <p>Une seule carte est autorisée par utilisateur pour des raisons de test uniquement.</p>
+    </section>
+
+    <div class="card-generator">
+        <label for="cardType">Choisissez le type de carte :</label>
+        <select id="cardType">
+            <option value="Visa">Visa</option>
+            <option value="MasterCard">MasterCard</option>
+            <option value="American Express">American Express</option>
+            <option value="JCB">JCB</option>
+        </select>
+        <button onclick="generateCard()">Générer la carte</button>
+    </div>
+
+    <div id="cardDisplay" class="card-display"></div>
+
+    <section class="links">
+        <h3>Mes autres projets :</h3>
+        <ul>
+            <li><a href="#" target="_blank">Lien vers un autre site (à compléter)</a></li>
+        </ul>
+    </section>
+        </main>
+        
     </header>
     <main>
         <div class="card-generator">
