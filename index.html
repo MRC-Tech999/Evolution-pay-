@@ -1,108 +1,54 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Envoyer un message WhatsApp</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            padding: 20px;
-        }
-        .container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 500px;
-            margin: auto;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-        }
-        input, textarea {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-        }
-        button {
-            margin-top: 15px;
-            padding: 10px;
-            width: 100%;
-            background-color: #25d366;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #1ebe59;
-        }
-        #result {
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TikTok Growth API Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    button { background-color: #4CAF50; color: white; border: none; border-radius: 5px; }
+    #result { margin-top: 20px; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Envoyer un message WhatsApp</h1>
+  <div class="container">
+    <h2>Tester l'API TikTok Growth</h2>
+    <input type="text" id="link" placeholder="Lien TikTok (live/post) à booster" />
+    <button onclick="sendOrder()">Envoyer la commande</button>
+    <div id="result"></div>
+  </div>
 
-        <!-- Formulaire pour envoyer un message -->
-        <form id="messageForm">
-            <label for="yourNumber">Numéro destinataire (Ex : 919876543210) :</label>
-            <input type="text" id="yourNumber" placeholder="Entrez le numéro" required>
+  <script>
+    async function sendOrder() {
+      const link = document.getElementById("link").value.trim();
+      const resultBox = document.getElementById("result");
 
-            <label for="yourMessage">Message :</label>
-            <textarea id="yourMessage" placeholder="Entrez votre message" required></textarea>
+      if (!link) {
+        resultBox.textContent = "Veuillez entrer un lien TikTok valide.";
+        return;
+      }
 
-            <button type="submit">Envoyer</button>
-        </form>
+      resultBox.textContent = "Envoi en cours...";
 
-        <div id="result"></div>
-    </div>
-
-    <script>
-        document.getElementById("messageForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
-
-            const yourNumber = document.getElementById("yourNumber").value.trim();
-            const yourMessage = document.getElementById("yourMessage").value.trim();
-
-            const resultDiv = document.getElementById("result");
-
-            if (!yourNumber || !yourMessage) {
-                resultDiv.textContent = "Veuillez remplir tous les champs.";
-                return;
-            }
-
-            const url = `https://getitsms-whatsapp-apis.p.rapidapi.com/45?your_number=${encodeURIComponent(yourNumber)}&your_message=${encodeURIComponent(yourMessage)}`;
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-rapidapi-host': 'getitsms-whatsapp-apis.p.rapidapi.com',
-                        'x-rapidapi-key': 'ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d'
-                    }
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    resultDiv.innerHTML = `<p>Message envoyé avec succès !</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
-                } else {
-                    resultDiv.innerHTML = `<p>Erreur lors de l'envoi du message :</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
-                }
-            } catch (error) {
-                console.error(error);
-                resultDiv.textContent = "Erreur de réseau ou de configuration.";
-            }
+      try {
+        const response = await fetch("https://tiktok-growth-package-followers-views-likes-api.p.rapidapi.com/forward_order/645", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-rapidapi-host": "tiktok-growth-package-followers-views-likes-api.p.rapidapi.com",
+            "x-rapidapi-key": "ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d"
+          },
+          body: JSON.stringify({ link: link })
         });
-    </script>
+
+        const data = await response.json();
+        resultBox.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+      } catch (error) {
+        resultBox.textContent = "Erreur lors de l'envoi : " + error.message;
+      }
+    }
+  </script>
 </body>
 </html>
