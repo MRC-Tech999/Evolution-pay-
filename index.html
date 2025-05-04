@@ -2,133 +2,104 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MarcGPT V2</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    * { box-sizing: border-box; }
     body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
       margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f4f7fa;
+      padding: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 0 10px;
+      height: 100vh;
     }
-    header {
-      background-color: #20232a;
-      color: white;
-      width: 100%;
-      padding: 15px;
-      text-align: center;
-      font-size: 1.5em;
-    }
-    .chat-container {
-      width: 100%;
-      max-width: 800px;
-      background: white;
-      margin-top: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      height: 80vh;
-    }
-    .messages {
-      flex-grow: 1;
+
+    #chat-container {
+      flex: 1;
       overflow-y: auto;
-      padding: 20px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
     }
+
     .message {
-      display: flex;
-      margin-bottom: 15px;
-      align-items: flex-start;
-    }
-    .message.user { justify-content: flex-end; }
-    .message.bot { justify-content: flex-start; }
-    .avatar {
-      width: 40px;
-      height: 40px;
-      background: #007bff;
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      margin-right: 10px;
-    }
-    .bot .avatar { background: #28a745; margin-right: 10px; }
-    .user .avatar { margin-left: 10px; order: 2; }
-    .bubble {
-      max-width: 70%;
-      padding: 12px;
-      border-radius: 15px;
-      background: #f1f0f0;
-    }
-    .user .bubble {
-      background: #dcf8c6;
-    }
-    .input-area {
-      display: flex;
-      border-top: 1px solid #ccc;
+      margin-bottom: 10px;
       padding: 10px;
+      border-radius: 8px;
+      max-width: 80%;
     }
-    textarea {
-      flex-grow: 1;
-      resize: none;
-      border-radius: 10px;
+
+    .user {
+      background-color: #d0ebff;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background-color: #e2e2e2;
+      align-self: flex-start;
+    }
+
+    #form {
+      display: flex;
       padding: 10px;
-      border: 1px solid #ccc;
-      font-size: 1em;
+      background-color: #ffffff;
     }
-    button {
-      background: #007bff;
-      color: white;
-      border: none;
-      padding: 0 20px;
-      margin-left: 10px;
-      border-radius: 10px;
-      font-size: 1em;
-      cursor: pointer;
+
+    #input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
     }
-    button:hover { background: #0056b3; }
+
+    #send {
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+
+    @media (max-width: 600px) {
+      #input {
+        font-size: 14px;
+      }
+
+      #send {
+        font-size: 14px;
+      }
+    }
   </style>
 </head>
 <body>
-
-  <header>MarcGPT V2</header>
-
-  <div class="chat-container">
-    <div class="messages" id="chatBox"></div>
-    <div class="input-area">
-      <textarea id="userInput" rows="2" placeholder="Écris ta question ici..."></textarea>
-      <button onclick="sendToMarcGPT()">Envoyer</button>
-    </div>
-  </div>
+  <div id="chat-container"></div>
+  <form id="form">
+    <input type="text" id="input" placeholder="Écris un message..." required />
+    <button type="submit" id="send">Envoyer</button>
+  </form>
 
   <script>
-    async function sendToMarcGPT() {
-      const input = document.getElementById('userInput');
+    const chatContainer = document.getElementById("chat-container");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
       const message = input.value.trim();
       if (!message) return;
 
-      appendMessage(message, 'user');
-      input.value = '';
-      appendMessage('...', 'bot');
+      addMessage("user", message);
+      input.value = "";
 
       try {
-        const response = await fetch('https://open-ai21.p.rapidapi.com/conversationgpt35', {
-          method: 'POST',
+        const response = await fetch("https://open-ai21.p.rapidapi.com/conversationgpt35", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'x-rapidapi-host': 'open-ai21.p.rapidapi.com',
-            'x-rapidapi-key': 'ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d'
+            "Content-Type": "application/json",
+            "x-rapidapi-host": "open-ai21.p.rapidapi.com",
+            "x-rapidapi-key": "ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d"
           },
           body: JSON.stringify({
-            messages: [{ role: 'user', content: message }],
+            messages: [{ role: "user", content: message }],
             web_access: false,
-            system_prompt: '',
+            system_prompt: "",
             temperature: 0.9,
             top_k: 5,
             top_p: 0.9,
@@ -137,49 +108,29 @@
         });
 
         const data = await response.json();
-        const reply = data.result || 'Pas de réponse reçue.';
-        removeLoading();
-        appendMessage(reply, 'bot');
-        speakText(reply);
-      } catch (error) {
-        removeLoading();
-        appendMessage("Erreur de connexion : " + error.message, 'bot');
+        console.log("API response:", data);
+
+        // Correction ici selon ce que retourne l’API
+        const reply = data.result || data.response || data.message || "Pas de réponse reçue.";
+        addMessage("bot", reply);
+
+        // Lecture audio (optionnel)
+        const audio = new SpeechSynthesisUtterance(reply);
+        speechSynthesis.speak(audio);
+
+      } catch (err) {
+        console.error("Erreur API :", err);
+        addMessage("bot", "Une erreur est survenue.");
       }
-    }
+    });
 
-    function appendMessage(text, sender) {
-      const chatBox = document.getElementById('chatBox');
-      const msg = document.createElement('div');
-      msg.className = `message ${sender}`;
-
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar';
-      avatar.textContent = sender === 'user' ? 'U' : 'M';
-
-      const bubble = document.createElement('div');
-      bubble.className = 'bubble';
-      bubble.textContent = text;
-
-      msg.appendChild(avatar);
-      msg.appendChild(bubble);
-      chatBox.appendChild(msg);
-      chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function removeLoading() {
-      const chatBox = document.getElementById('chatBox');
-      const last = chatBox.lastElementChild;
-      if (last && last.classList.contains('bot') && last.querySelector('.bubble').textContent === '...') {
-        chatBox.removeChild(last);
-      }
-    }
-
-    function speakText(text) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'fr-FR';
-      speechSynthesis.speak(utterance);
+    function addMessage(role, text) {
+      const div = document.createElement("div");
+      div.className = `message ${role}`;
+      div.innerText = text;
+      chatContainer.appendChild(div);
+      chatContainer.scrollTop = chatContainer.scrollHeight;
     }
   </script>
-
 </body>
 </html>
