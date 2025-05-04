@@ -1,52 +1,74 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TikTok Growth API Test</title>
+  <meta charset="UTF-8">
+  <title>Instagram Highlight Viewer</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
-    .container { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    input, button { width: 100%; padding: 10px; margin: 10px 0; }
-    button { background-color: #4CAF50; color: white; border: none; border-radius: 5px; }
-    #result { margin-top: 20px; }
+    body { font-family: Arial; background: #f2f2f2; padding: 20px; }
+    .container { background: white; padding: 20px; border-radius: 10px; max-width: 700px; margin: auto; }
+    input, button { width: 100%; padding: 10px; margin-top: 10px; }
+    button { background: #0077ff; color: white; border: none; border-radius: 5px; }
+    .media { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 10px; }
+    .media img, .media video { max-width: 200px; border-radius: 10px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h2>Tester l'API TikTok Growth</h2>
-    <input type="text" id="link" placeholder="Lien TikTok (live/post) à booster" />
-    <button onclick="sendOrder()">Envoyer la commande</button>
-    <div id="result"></div>
+    <h2>Afficher un Highlight Instagram</h2>
+    <input type="text" id="username" placeholder="Nom d'utilisateur (ex: sydney_sweeney)">
+    <input type="text" id="highlightId" placeholder="ID du Highlight (ex: highlight:18458777440051238)">
+    <button onclick="loadHighlight()">Charger</button>
+
+    <div id="result" class="media"></div>
   </div>
 
   <script>
-    async function sendOrder() {
-      const link = document.getElementById("link").value.trim();
-      const resultBox = document.getElementById("result");
+    async function loadHighlight() {
+      const username = document.getElementById('username').value.trim();
+      const highlightId = document.getElementById('highlightId').value.trim();
+      const result = document.getElementById('result');
+      result.innerHTML = "Chargement...";
 
-      if (!link) {
-        resultBox.textContent = "Veuillez entrer un lien TikTok valide.";
+      if (!username || !highlightId) {
+        result.innerHTML = "Veuillez entrer un nom d'utilisateur et un ID de Highlight.";
         return;
       }
 
-      resultBox.textContent = "Envoi en cours...";
-
       try {
-        const response = await fetch("https://tiktok-growth-package-followers-views-likes-api.p.rapidapi.com/forward_order/645", {
-          method: "POST",
+        const res = await fetch(`https://free-instagram-scraper.p.rapidapi.com/user/${username}/highlight/${highlightId}`, {
+          method: 'GET',
           headers: {
-            "Content-Type": "application/json",
-            "x-rapidapi-host": "tiktok-growth-package-followers-views-likes-api.p.rapidapi.com",
-            "x-rapidapi-key": "ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d"
-          },
-          body: JSON.stringify({ link: link })
+            'x-rapidapi-host': 'free-instagram-scraper.p.rapidapi.com',
+            'x-rapidapi-key': 'ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d'
+          }
         });
 
-        const data = await response.json();
-        resultBox.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-      } catch (error) {
-        resultBox.textContent = "Erreur lors de l'envoi : " + error.message;
+        const data = await res.json();
+
+        if (!data.items || data.items.length === 0) {
+          result.innerHTML = "Aucune story trouvée ou highlight non valide.";
+          return;
+        }
+
+        result.innerHTML = "";
+        data.items.forEach(item => {
+          if (item.media_type === 1 && item.image_versions2) {
+            const imgUrl = item.image_versions2.candidates[0].url;
+            const img = document.createElement('img');
+            img.src = imgUrl;
+            result.appendChild(img);
+          } else if (item.media_type === 2 && item.video_versions) {
+            const videoUrl = item.video_versions[0].url;
+            const video = document.createElement('video');
+            video.src = videoUrl;
+            video.controls = true;
+            result.appendChild(video);
+          }
+        });
+
+      } catch (err) {
+        console.error(err);
+        result.innerHTML = "Erreur lors du chargement : " + err.message;
       }
     }
   </script>
