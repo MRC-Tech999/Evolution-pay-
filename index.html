@@ -3,29 +3,108 @@
 <head>
   <meta charset="UTF-8">
   <title>MarcGPT V2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
-    h1 { margin-top: 20px; }
-    .chat-box { width: 90%; max-width: 600px; background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-top: 20px; }
-    .message { display: flex; align-items: flex-start; margin-bottom: 15px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; }
-    .user .avatar { background: #007bff; }
-    .bot .avatar { background: #28a745; }
-    .text { background: #f1f1f1; padding: 10px 15px; border-radius: 8px; max-width: 80%; }
-    .user .text { background: #dcf8c6; align-self: flex-end; }
-    #userInput, button { width: 100%; padding: 10px; margin-top: 10px; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f4f7fa;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+    }
+    header {
+      background-color: #20232a;
+      color: white;
+      width: 100%;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5em;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 800px;
+      background: white;
+      margin-top: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+    }
+    .messages {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .message {
+      display: flex;
+      margin-bottom: 15px;
+      align-items: flex-start;
+    }
+    .message.user { justify-content: flex-end; }
+    .message.bot { justify-content: flex-start; }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      background: #007bff;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    .bot .avatar { background: #28a745; margin-right: 10px; }
+    .user .avatar { margin-left: 10px; order: 2; }
+    .bubble {
+      max-width: 70%;
+      padding: 12px;
+      border-radius: 15px;
+      background: #f1f0f0;
+    }
+    .user .bubble {
+      background: #dcf8c6;
+    }
+    .input-area {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+    }
+    textarea {
+      flex-grow: 1;
+      resize: none;
+      border-radius: 10px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 0 20px;
+      margin-left: 10px;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
   </style>
 </head>
 <body>
-  <h1>MarcGPT V2</h1>
 
-  <div class="chat-box" id="chatBox">
-    <!-- Messages s'affichent ici -->
-  </div>
+  <header>MarcGPT V2</header>
 
-  <div class="chat-box">
-    <textarea id="userInput" rows="3" placeholder="Écris ta question ici..."></textarea>
-    <button onclick="sendToMarcGPT()">Envoyer</button>
+  <div class="chat-container">
+    <div class="messages" id="chatBox"></div>
+    <div class="input-area">
+      <textarea id="userInput" rows="2" placeholder="Écris ta question ici..."></textarea>
+      <button onclick="sendToMarcGPT()">Envoyer</button>
+    </div>
   </div>
 
   <script>
@@ -36,57 +115,62 @@
 
       appendMessage(message, 'user');
       input.value = '';
-
-      appendMessage('Chargement...', 'bot');
+      appendMessage('...', 'bot');
 
       try {
-        const res = await fetch('https://chatgpt-42.p.rapidapi.com/aitohuman', {
+        const response = await fetch('https://open-ai21.p.rapidapi.com/conversationgpt35', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-rapidapi-host': 'chatgpt-42.p.rapidapi.com',
+            'x-rapidapi-host': 'open-ai21.p.rapidapi.com',
             'x-rapidapi-key': 'ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d'
           },
-          body: JSON.stringify({ text: message })
+          body: JSON.stringify({
+            messages: [{ role: 'user', content: message }],
+            web_access: false,
+            system_prompt: '',
+            temperature: 0.9,
+            top_k: 5,
+            top_p: 0.9,
+            max_tokens: 256
+          })
         });
 
-        const data = await res.json();
-        const botReply = data.output || 'Pas de réponse reçue.';
-        
+        const data = await response.json();
+        const reply = data.result || 'Pas de réponse reçue.';
         removeLoading();
-        appendMessage(botReply, 'bot');
-        speakText(botReply);
-
-      } catch (err) {
+        appendMessage(reply, 'bot');
+        speakText(reply);
+      } catch (error) {
         removeLoading();
-        appendMessage('Erreur : ' + err.message, 'bot');
+        appendMessage("Erreur de connexion : " + error.message, 'bot');
       }
     }
 
     function appendMessage(text, sender) {
       const chatBox = document.getElementById('chatBox');
-      const messageDiv = document.createElement('div');
-      messageDiv.className = 'message ' + sender;
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
 
       const avatar = document.createElement('div');
       avatar.className = 'avatar';
       avatar.textContent = sender === 'user' ? 'U' : 'M';
 
-      const textDiv = document.createElement('div');
-      textDiv.className = 'text';
-      textDiv.textContent = text;
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      bubble.textContent = text;
 
-      messageDiv.appendChild(avatar);
-      messageDiv.appendChild(textDiv);
-      chatBox.appendChild(messageDiv);
+      msg.appendChild(avatar);
+      msg.appendChild(bubble);
+      chatBox.appendChild(msg);
       chatBox.scrollTop = chatBox.scrollHeight;
     }
 
     function removeLoading() {
       const chatBox = document.getElementById('chatBox');
-      const lastMsg = chatBox.lastElementChild;
-      if (lastMsg && lastMsg.classList.contains('bot') && lastMsg.querySelector('.text').textContent === 'Chargement...') {
-        chatBox.removeChild(lastMsg);
+      const last = chatBox.lastElementChild;
+      if (last && last.classList.contains('bot') && last.querySelector('.bubble').textContent === '...') {
+        chatBox.removeChild(last);
       }
     }
 
@@ -96,5 +180,6 @@
       speechSynthesis.speak(utterance);
     }
   </script>
+
 </body>
 </html>
