@@ -1,86 +1,143 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Envoyer Message WhatsApp</title>
-  <style>
-    body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; }
-    input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; }
-    button { padding: 10px 20px; font-size: 16px; }
-    #result { margin-top: 20px; font-weight: bold; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envoyer un message WhatsApp</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1ebe59;
+        }
+        #result {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>WhatsApp Message avec Pièce Jointe</h1>
+    <div class="container">
+        <h1>Envoyer un message WhatsApp avec Pièce Jointe</h1>
 
-  <label>Numéro WhatsApp (ex : 33612345678) :</label>
-  <input type="text" id="number" placeholder="Ex: 33612345678">
+        <!-- Formulaire pour envoyer un message -->
+        <form id="messageForm">
+            <label for="accountId">Account ID :</label>
+            <input type="text" id="accountId" placeholder="Account ID" required>
 
-  <label>Message :</label>
-  <textarea id="message" rows="4" placeholder="Votre message..."></textarea>
+            <label for="apiKey">Key API :</label>
+            <input type="text" id="apiKey" placeholder="Key API" required>
 
-  <label>URL de la pièce jointe :</label>
-  <input type="text" id="fileUrl" placeholder="https://example.com/image.jpg">
+            <label for="to">Numéro destinataire :</label>
+            <input type="text" id="to" placeholder="Ex: 6285846287530" required>
 
-  <label>Nom du fichier :</label>
-  <input type="text" id="fileName" placeholder="nom_du_fichier">
+            <label for="body">Message :</label>
+            <textarea id="body" placeholder="Votre message" required></textarea>
 
-  <label>Type du fichier (png, pdf, jpeg...) :</label>
-  <input type="text" id="fileType" placeholder="png">
+            <label for="attachmentUrl">URL de la pièce jointe :</label>
+            <input type="text" id="attachmentUrl" placeholder="https://example.com/image.png">
 
-  <button onclick="sendWhatsAppMessage()">Envoyer</button>
+            <label for="filename">Nom du fichier :</label>
+            <input type="text" id="filename" placeholder="Nom du fichier (ex: image)">
 
-  <p id="result"></p>
+            <label for="fileType">Type de fichier (png/jpg/pdf etc.) :</label>
+            <input type="text" id="fileType" placeholder="png">
 
-  <script>
-    async function sendWhatsAppMessage() {
-      const rapidApiKey = "ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d"; // à sécuriser
-      const keyApi = "95e2b258-0260-4272-8016-8d24054e14dd"; // à sécuriser
-      const accountId = "50dd81b7-4e18-4c5a-ad7a-36c723ab955f"; // à sécuriser
+            <button type="submit">Envoyer</button>
+        </form>
 
-      const to = document.getElementById("number").value.trim();
-      const body = document.getElementById("message").value.trim();
-      const url = document.getElementById("fileUrl").value.trim();
-      const filename = document.getElementById("fileName").value.trim();
-      const type = document.getElementById("fileType").value.trim();
-      const resultEl = document.getElementById("result");
+        <div id="result"></div>
+    </div>
 
-      if (!to || !body) {
-        resultEl.textContent = "Le numéro et le message sont obligatoires.";
-        return;
-      }
+    <script>
+        document.getElementById("messageForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
 
-      const payload = {
-        account_id: accountId,
-        to,
-        body,
-        attachment: url ? {
-          url,
-          filename: filename || "fichier",
-          type: type || "png"
-        } : undefined
-      };
+            const accountId = document.getElementById("accountId").value.trim();
+            const apiKey = document.getElementById("apiKey").value.trim();
+            const to = document.getElementById("to").value.trim();
+            const body = document.getElementById("body").value.trim();
+            const attachmentUrl = document.getElementById("attachmentUrl").value.trim();
+            const filename = document.getElementById("filename").value.trim();
+            const fileType = document.getElementById("fileType").value.trim();
 
-      try {
-        const res = await fetch("https://whatsapp-private-api.p.rapidapi.com/v1/conversation", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "KeyApi": keyApi,
-            "x-rapidapi-host": "whatsapp-private-api.p.rapidapi.com",
-            "x-rapidapi-key": rapidApiKey
-          },
-          body: JSON.stringify(payload)
+            const resultDiv = document.getElementById("result");
+
+            if (!accountId || !apiKey || !to || !body) {
+                resultDiv.textContent = "Veuillez remplir tous les champs obligatoires.";
+                return;
+            }
+
+            const payload = {
+                account_id: accountId,
+                to: to,
+                body: body
+            };
+
+            // Ajout de la pièce jointe si fournie
+            if (attachmentUrl && filename && fileType) {
+                payload.attachment = {
+                    url: attachmentUrl,
+                    filename: filename,
+                    type: fileType
+                };
+            }
+
+            try {
+                const response = await fetch("https://whatsapp-private-api.p.rapidapi.com/v1/conversation", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "KeyApi": apiKey,
+                        "x-rapidapi-host": "whatsapp-private-api.p.rapidapi.com",
+                        "x-rapidapi-key": "ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d"
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p>Message envoyé avec succès !</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<p>Erreur lors de l'envoi :</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                }
+            } catch (error) {
+                console.error(error);
+                resultDiv.textContent = "Erreur de réseau ou de configuration.";
+            }
         });
-
-        const data = await res.json();
-        console.log(data);
-        resultEl.textContent = data?.message || "Message envoyé (si l'API est connectée).";
-      } catch (error) {
-        console.error(error);
-        resultEl.textContent = "Erreur lors de l'envoi du message.";
-      }
-    }
-  </script>
+    </script>
 </body>
 </html>
