@@ -1,295 +1,86 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>ePay - Haïti</title>
+  <meta charset="UTF-8">
+  <title>Envoyer Message WhatsApp</title>
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      background-color: #f0f0f0;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #111;
-      color: white;
-      padding: 15px;
-    }
-    .insta-logo {
-      width: 30px;
-      margin-left: 10px;
-    }
-    .card-generator, .buttons {
-      margin: 25px 0;
-    }
-    select, button {
-      padding: 10px;
-      margin: 5px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-    }
-    button {
-      background-color: #2196F3;
-      color: white;
-      cursor: pointer;
-    }
-    .card-container {
-      perspective: 1000px;
-      width: 360px;
-      margin: auto;
-    }
-    .card {
-      width: 360px;
-      height: 240px;
-      border-radius: 15px;
-      position: relative;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-      padding: 20px;
-      box-sizing: border-box;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      background: linear-gradient(135deg, #263238, #546e7a);
-      transition: background 0.5s ease;
-    }
-    .chip {
-      width: 50px;
-      height: 35px;
-      background: linear-gradient(to right, #d4af37, #b8860b);
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-    .card-logo {
-      height: 30px;
-      align-self: flex-end;
-    }
-    .card-number {
-      font-size: 1.3em;
-      letter-spacing: 2px;
-      margin: 10px 0;
-    }
-    .card-details {
-      text-align: left;
-      font-size: 0.9em;
-    }
-    .card-type {
-      align-self: flex-end;
-      font-weight: bold;
-      font-size: 1em;
-    }
-    footer {
-      background-color: #111;
-      color: #ccc;
-      padding: 10px;
-      margin-top: 50px;
-    }
-    .description {
-      background-color: white;
-      padding: 15px;
-      margin: 20px;
-      border-radius: 10px;
-    }
-    @media (max-width: 400px) {
-      .card {
-        width: 90%;
-        height: auto;
-        padding: 15px;
-      }
-      .card-number {
-        font-size: 1.1em;
-      }
-    }
+    body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; }
+    input, textarea { width: 100%; margin-bottom: 10px; padding: 8px; }
+    button { padding: 10px 20px; font-size: 16px; }
+    #result { margin-top: 20px; font-weight: bold; }
   </style>
 </head>
 <body>
-  <header>
-    <h1>ePay — Haïti</h1>
-    <a href="https://www.instagram.com/j.m.h.2024" target="_blank">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" class="insta-logo" />
-    </a>
-  </header>
+  <h1>WhatsApp Message avec Pièce Jointe</h1>
 
-  <div class="description">
-    <p>Bienvenue sur ePay — Générateur de cartes test pour services d’essai. Valide pour test en ligne (sans transaction réelle). 1 carte par utilisateur.</p>
-  </div>
+  <label>Numéro WhatsApp (ex : 33612345678) :</label>
+  <input type="text" id="number" placeholder="Ex: 33612345678">
 
-  <div class="card-generator">
-    <label>Choisissez un type :</label>
-    <select id="cardType">
-      <option value="Visa">Visa</option>
-      <option value="MasterCard">MasterCard</option>
-      <option value="American Express">American Express</option>
-      <option value="JCB">JCB</option>
-    </select>
-    <button onclick="generateCard()">Générer la carte</button>
-  </div>
+  <label>Message :</label>
+  <textarea id="message" rows="4" placeholder="Votre message..."></textarea>
 
-  <div class="buttons">
-    <button onclick="changeDesign()">Changer design carte</button>
-  </div>
+  <label>URL de la pièce jointe :</label>
+  <input type="text" id="fileUrl" placeholder="https://example.com/image.jpg">
 
-  <div class="card-container">
-    <div class="card" id="cardFront">
-      <div class="chip"></div>
-      <img src="" alt="Logo Carte" class="card-logo" id="cardLogo">
-      <div class="card-number" id="cardNumber">**** **** **** ****</div>
-      <div class="card-details">
-        <p><strong>Nom :</strong> <span id="cardName">---</span></p>
-        <p><strong>CVV :</strong> <span id="cardCVV">---</span></p>
-        <p><strong>Expiration :</strong> <span id="cardExpiry">--/--</span></p>
-      </div>
-      <div class="card-type" id="cardTypeLabel">Type</div>
-    </div>
-  </div>
+  <label>Nom du fichier :</label>
+  <input type="text" id="fileName" placeholder="nom_du_fichier">
 
-  <footer>
-    © 2025 Marc-Tech & EvolutionPay — Tous droits réservés
-  </footer>
+  <label>Type du fichier (png, pdf, jpeg...) :</label>
+  <input type="text" id="fileType" placeholder="png">
 
-  <!-- SCRIPT -->
+  <button onclick="sendWhatsAppMessage()">Envoyer</button>
+
+  <p id="result"></p>
+
   <script>
-    const cardFront = document.getElementById("cardFront");
-    const cardNumberEl = document.getElementById("cardNumber");
-    const cardNameEl = document.getElementById("cardName");
-    const cardCVVEl = document.getElementById("cardCVV");
-    const cardExpiryEl = document.getElementById("cardExpiry");
-    const cardTypeLabelEl = document.getElementById("cardTypeLabel");
-    const cardLogoEl = document.getElementById("cardLogo");
+    async function sendWhatsAppMessage() {
+      const rapidApiKey = "ab42dda446mshde4ba65d25b85fdp13b83ejsn3965c0519b7d"; // à sécuriser
+      const keyApi = "95e2b258-0260-4272-8016-8d24054e14dd"; // à sécuriser
+      const accountId = "50dd81b7-4e18-4c5a-ad7a-36c723ab955f"; // à sécuriser
 
-    const gradients = [
-      "linear-gradient(135deg, #ff512f, #dd2476)",
-      "linear-gradient(135deg, #1e3c72, #2a5298)",
-      "linear-gradient(135deg, #654ea3, #eaafc8)",
-      "linear-gradient(135deg, #00c6ff, #0072ff)",
-      "linear-gradient(135deg, #43cea2, #185a9d)",
-      "linear-gradient(135deg, #f7971e, #ffd200)",
-      "linear-gradient(135deg, #ff416c, #ff4b2b)"
-    ];
+      const to = document.getElementById("number").value.trim();
+      const body = document.getElementById("message").value.trim();
+      const url = document.getElementById("fileUrl").value.trim();
+      const filename = document.getElementById("fileName").value.trim();
+      const type = document.getElementById("fileType").value.trim();
+      const resultEl = document.getElementById("result");
 
-    const logoMap = {
-      'Visa': 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg',
-      'MasterCard': 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg',
-      'American Express': 'https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg',
-      'JCB': 'https://upload.wikimedia.org/wikipedia/commons/2/2e/JCB_logo.svg'
-    };
-
-    const cards = {
-      <!-- Ton code HTML d'origine reste inchangé jusqu'au script -->
-<script>
-  const cardBox = document.getElementById("cardBox");
-  const cardFront = document.getElementById("cardFront");
-  const cardBack = document.getElementById("cardBack");
-  const colors = ["#263238", "#00695c", "#3f51b5", "#6a1b9a", "#37474f"];
-  let flipped = false;
-  let generated = false;
-
-  const cards = {
-    "Visa": [
-      { name: "Weldon Kuhlman Sr.", number: "4716153453171906", cvv: "254", expiry: "03/26" },
-      { name: "Rosanna Miller", number: "4585210795086719", cvv: "252", expiry: "08/27" },
-      { name: "Dr. Jevon Hagenes", number: "4024007199736439", cvv: "299", expiry: "11/26" },
-      { name: "Mrs. Kitty Labadie Sr.", number: "4929781202811738", cvv: "998", expiry: "06/27" },
-      { name: "Bertha Connelly", number: "4485665819559887", cvv: "776", expiry: "05/26" },
-      { name: "Minerva Wuckert", number: "4485857377153779", cvv: "240", expiry: "04/26" },
-      { name: "Murl Gleichner", number: "4916109714151085", cvv: "800", expiry: "02/27" },
-      { name: "Hilario Heller", number: "4716590976081965", cvv: "519", expiry: "01/27" },
-      { name: "Shana Yost", number: "4532263449264533", cvv: "127", expiry: "12/26" },
-      { name: "Lurline Ritchie", number: "4024007163238701", cvv: "654", expiry: "09/25" },
-      { name: "Hermina Hermann", number: "4929453182368176", cvv: "352", expiry: "08/25" },
-      { name: "Brice Rutherford", number: "4539820026230758", cvv: "376", expiry: "10/27" },
-      { name: "Rickey Powlowski DVM", number: "4024007135272267", cvv: "801", expiry: "07/27" },
-      { name: "Elsie Bahringer", number: "4916947535574989", cvv: "396", expiry: "10/25" },
-      { name: "Hassan Lang", number: "4024007156506411", cvv: "437", expiry: "12/26" },
-      { name: "Claire Bergstrom II", number: "4716968472487169", cvv: "302", expiry: "05/25" }
-    ],
-    "MasterCard": [
-      { name: "Adonis Douglas", number: "5161084815414287", cvv: "227", expiry: "09/26" },
-      { name: "Dr. Arielle Medhurst II", number: "2720047677221158", cvv: "696", expiry: "06/26" },
-      { name: "Clarabelle Donnelly", number: "5340883927999927", cvv: "690", expiry: "07/27" },
-      { name: "Mrs. Katarina Turcotte IV", number: "2720322765086833", cvv: "858", expiry: "02/28" },
-      { name: "Noelia Zboncak", number: "2455518216571122", cvv: "151", expiry: "12/25" },
-      { name: "Prof. Magdalen Olson", number: "2337550734514395", cvv: "362", expiry: "01/27" },
-      { name: "Miss Luella McGlynn II", number: "2648885079170807", cvv: "126", expiry: "05/25" },
-      { name: "Miss Jewel Hartmann", number: "5568288787847171", cvv: "348", expiry: "03/28" },
-      { name: "Rupert Lockman", number: "5207932402842409", cvv: "351", expiry: "05/26" },
-      { name: "Mr. Alexandro Oberbrunner Jr.", number: "2436700919287453", cvv: "219", expiry: "10/25" },
-      { name: "Arne Stamm", number: "5142492943440724", cvv: "677", expiry: "10/27" },
-      { name: "Prof. Terrell Bruen II", number: "2596987540520388", cvv: "118", expiry: "12/27" },
-      { name: "Mr. Mathew Lockman III", number: "2552654799879343", cvv: "547", expiry: "11/26" },
-      { name: "Jerrell Grady", number: "5134793735350421", cvv: "327", expiry: "11/25" },
-      { name: "Dr. Lowell Gerlach Sr.", number: "5272783668968960", cvv: "390", expiry: "04/28" },
-      { name: "Arianna Murray", number: "2720222492232983", cvv: "659", expiry: "03/28" }
-    ],
-    "American Express": [
-      { name: "Deonte Barrows", number: "343528873102822", cvv: "873", expiry: "12/27" },
-      { name: "Ms. Magali Conroy II", number: "373332587213170", cvv: "850", expiry: "03/28" },
-      { name: "Queen Bartoletti", number: "374959955976753", cvv: "235", expiry: "01/27" },
-      { name: "Westley Mayer II", number: "349745778301200", cvv: "436", expiry: "04/27" },
-      { name: "Noah Herman", number: "378047389084133", cvv: "497", expiry: "07/26" },
-      { name: "Clement Spencer III", number: "345187171286577", cvv: "663", expiry: "10/27" },
-      { name: "Albin Boyle", number: "340651773175475", cvv: "822", expiry: "10/25" },
-      { name: "Mrs. Vanessa Schmitt V", number: "344207392384299", cvv: "778", expiry: "07/25" },
-      { name: "Xzavier Abbott", number: "340148856928599", cvv: "131", expiry: "03/26" },
-      { name: "Prof. Carol Dibbert", number: "346881951740451", cvv: "324", expiry: "07/27" },
-      { name: "Mrs. Jayda Strosin I", number: "347210341396841", cvv: "753", expiry: "12/27" },
-      { name: "Joanie Gorczany", number: "379577395829161", cvv: "957", expiry: "11/26" },
-      { name: "Santos West", number: "371249852428907", cvv: "905", expiry: "08/25" },
-      { name: "Dr. Austin Altenwerth IV", number: "373994403012738", cvv: "441", expiry: "05/25" },
-      { name: "Giovanni Kiehn Sr.", number: "379227194141729", cvv: "299", expiry: "03/26" },
-      { name: "Dr. Abdul Bashirian DDS", number: "344528573377855", cvv: "117", expiry: "09/26" }
-    ],
-    "JCB": [
-      { name: "Tessie Huel DVM", number: "3589929573079475", cvv: "135", expiry: "10/25" },
-      { name: "Luigi Leannon", number: "3528975898540810", cvv: "147", expiry: "02/28" },
-      { name: "Trace Will", number: "3589631742991479", cvv: "820", expiry: "08/27" },
-      { name: "Xzavier Goyette", number: "3589523707698829", cvv: "197", expiry: "12/25" },
-      { name: "Cielo Renner IV", number: "3589639247145087", cvv: "408", expiry: "11/27" },
-      { name: "Gonzalo Turcotte", number: "3528269823210073", cvv: "767", expiry: "07/26" },
-      { name: "Angie Pagac", number: "3589092029457595", cvv: "759", expiry: "01/26" },
-      { name: "Angelica Sipes", number: "3528307059347134", cvv: "302", expiry: "04/26" },
-      { name: "Timmy Spinka Jr.", number: "3528697123301681", cvv: "551", expiry: "06/25" },
-      { name: "Miss Nelda Stroman DVM", number: "3589202795687016", cvv: "888", expiry: "08/25" },
-      { name: "Prof. Gilberto Keebler", number: "3589820921942680", cvv: "183", expiry: "08/27" },
-      { name: "Ms. Nannie Feeney III", number: "3589028606185191", cvv: "702", expiry: "05/26" },
-      { name: "Davonte Pagac Jr.", number: "3528766281697691", cvv: "314", expiry: "02/28" },
-      { name: "Shanel Wintheiser", number: "3589493293268470", cvv: "288", expiry: "11/27" },
-      { name: "Ron Hamill", number: "3589963449400052", cvv: "539", expiry: "01/28" },
-      { name: "Shyann Nikolaus", number: "3528702343388854", cvv: "184", expiry: "01/27" }
-    ]
-
-    function formatCardNumber(cardNumber) {
-      return cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ');
-    }
-
-    function generateCard() {
-      const type = document.getElementById('cardType').value;
-      if (!cards[type] || cards[type].length === 0) {
-        alert("Plus de cartes disponibles pour ce type.");
+      if (!to || !body) {
+        resultEl.textContent = "Le numéro et le message sont obligatoires.";
         return;
       }
 
-      const index = Math.floor(Math.random() * cards[type].length);
-      const card = cards[type][index];
-      cards[type].splice(index, 1); // Retirer la carte utilisée
+      const payload = {
+        account_id: accountId,
+        to,
+        body,
+        attachment: url ? {
+          url,
+          filename: filename || "fichier",
+          type: type || "png"
+        } : undefined
+      };
 
-      cardNumberEl.textContent = formatCardNumber(card.number);
-      cardNameEl.textContent = card.name;
-      cardCVVEl.textContent = card.cvv;
-      cardExpiryEl.textContent = card.expiry;
-      cardTypeLabelEl.textContent = type;
-      cardLogoEl.src = logoMap[type];
+      try {
+        const res = await fetch("https://whatsapp-private-api.p.rapidapi.com/v1/conversation", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "KeyApi": keyApi,
+            "x-rapidapi-host": "whatsapp-private-api.p.rapidapi.com",
+            "x-rapidapi-key": rapidApiKey
+          },
+          body: JSON.stringify(payload)
+        });
 
-      changeDesign();
-    }
-
-    function changeDesign() {
-      const randomGradient = gradients[Math.floor(Math.random() * gradients.length)];
-      cardFront.style.background = randomGradient;
+        const data = await res.json();
+        console.log(data);
+        resultEl.textContent = data?.message || "Message envoyé (si l'API est connectée).";
+      } catch (error) {
+        console.error(error);
+        resultEl.textContent = "Erreur lors de l'envoi du message.";
+      }
     }
   </script>
 </body>
-  </html>
-  
+</html>
